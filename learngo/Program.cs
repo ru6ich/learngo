@@ -25,9 +25,15 @@ connectionString = connectionStringBuilder.ToString();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseMySql(connectionString, new MySqlServerVersion(new Version(8, 0, 21))));
 
-// Настраиваем порт из переменной окружения PORT
-var port = Environment.GetEnvironmentVariable("PORT") ?? "8080"; // 8080 как запасной вариант
-builder.WebHost.UseUrls($"http://*:{port}");
+// Получаем порт из переменной окружения PORT
+var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
+Console.WriteLine($"Using port: {port}");
+
+// Настраиваем приложение для прослушивания указанного порта
+builder.WebHost.ConfigureKestrel(options =>
+{
+    options.ListenAnyIP(int.Parse(port));
+});
 
 var app = builder.Build();
 
