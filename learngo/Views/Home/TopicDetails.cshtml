@@ -1,0 +1,50 @@
+﻿@model Backend.Models.Topic
+
+@{
+    ViewData["Title"] = Model.TopicName;
+}
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/css/styles.css">
+</head>
+<body>
+    <header>
+        <h1>@Model.TopicName</h1>
+        <nav>
+            <ul>
+                <li><a href="@Url.Action("Index", "Home")">Главная страница</a></li>
+                <li><a href="@Url.Action("Catalog", "Home")">Темы изучения</a></li>
+                <li><a href="@Url.Action("AddTopic", "Home")">Добавить тему</a></li>
+                <li><a href="@Url.Action("Contacts", "Home")">Контакты разработчика</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <section>
+            <h2>Описание темы</h2>
+            <p>@Model.Description</p>
+        </section>
+        <section>
+            <h2>Информация о теме</h2>
+            <div class="topic-info">
+                <p><strong>Сложность:</strong> @string.Join("", Enumerable.Repeat("★", Model.Difficulty))</p>
+                <p><strong>Время на изучение:</strong> @Model.TimeLimit минут</p>
+                <p><strong>Раздел:</strong> @Model.Section?.SectionName</p>
+                <p><strong>Автор:</strong> @Model.AuthorName</p>
+                <p><strong>Дата создания:</strong> @Model.CreatedAt.ToString("dd.MM.yyyy")</p>
+            </div>
+        </section>
+        <section>
+            <h2>Дополнительная информация</h2>
+            <div class="topic-description">
+                <p>Для получения дополнительной информации или задавания вопросов, пожалуйста, свяжитесь с автором по email: @Model.AuthorEmail</p>
+            </div>
+        </section>
+    </main>
+</body>
+</html>

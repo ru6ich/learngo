@@ -1,0 +1,91 @@
+@model Backend.Controllers.TopicDto
+
+@{
+    ViewData["Title"] = "Добавить тему";
+}
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/css/styles.css">
+</head>
+<body>
+    <header>
+        <h1>Добавить тему</h1>
+        <nav>
+            <ul>
+                <li><a href="@Url.Action("Index", "Home")">Главная страница</a></li>
+                <li><a href="@Url.Action("Catalog", "Home")">Темы изучения</a></li>
+                <li><a href="@Url.Action("AddTopic", "Home")" class="active">Добавить тему</a></li>
+                <li><a href="@Url.Action("Contacts", "Home")">Контакты разработчика</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <p>Введите информацию для добавления новой темы</p>
+        <form asp-action="AddTopic" method="post">
+            <label asp-for="TopicName">Название темы:</label>
+            <input asp-for="TopicName" required placeholder="Не менее 3 символов">
+            <span asp-validation-for="TopicName" style="color: red;"></span>
+
+            <label asp-for="SectionName">Название раздела:</label>
+            <input asp-for="SectionName" required placeholder="Не менее 3 символов">
+            <span asp-validation-for="SectionName" style="color: red;"></span>
+
+            <label asp-for="Description">Описание:</label>
+            <textarea asp-for="Description" required placeholder="Не менее 10 символов"></textarea>
+            <span asp-validation-for="Description" style="color: red;"></span>
+
+            <label asp-for="AuthorName">Имя автора:</label>
+            <input asp-for="AuthorName" required placeholder="Только буквы и пробелы">
+            <span asp-validation-for="AuthorName" style="color: red;"></span>
+
+            <label asp-for="Email">Email автора:</label>
+            <input asp-for="Email" type="email" required placeholder="example@mail.com">
+            <span asp-validation-for="Email" style="color: red;"></span>
+
+            <label asp-for="CreationDate">Дата создания темы:</label>
+            <input asp-for="CreationDate" type="date" required>
+            <span asp-validation-for="CreationDate" style="color: red;"></span>
+
+            <label asp-for="Complexity">Сложность темы (звезды):</label>
+            <select asp-for="Complexity" required>
+                <option value="">Выберите сложность</option>
+                <option value="1">1 звезда</option>
+                <option value="2">2 звезды</option>
+                <option value="3">3 звезды</option>
+                <option value="4">4 звезды</option>
+                <option value="5">5 звезд</option>
+            </select>
+            <span asp-validation-for="Complexity" style="color: red;"></span>
+
+            <label asp-for="ReadingTime">Время чтения:</label>
+            <select asp-for="ReadingTime" required>
+                <option value="">Выберите время</option>
+                <option value="5">5 минут</option>
+                <option value="15">15 минут</option>
+                <option value="30">30 минут</option>
+                <option value="60">1 час</option>
+                <option value="120">2 часа</option>
+            </select>
+            <span asp-validation-for="ReadingTime" style="color: red;"></span>
+
+            <button type="submit">Добавить</button>
+        </form>
+    </main>
+    <footer>
+        <p>
+            <img src="~/images/kaspersky.jpg" alt="Логотип Kaspersky" class="footer-img">
+            Файлы защищены Kaspersky Internet Security
+        </p>
+    </footer>
+    <script src="~/js/shared.js"></script>
+    <script src="~/js/add-topic.js"></script>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+</body>
+</html>

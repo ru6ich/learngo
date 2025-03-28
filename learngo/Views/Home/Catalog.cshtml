@@ -1,0 +1,137 @@
+@model IEnumerable<dynamic>
+
+@{
+    ViewData["Title"] = "Темы по Go";
+}
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/css/styles.css">
+    <style>
+        <style >
+        .search-container {
+            position: relative;
+            display: inline-block;
+            margin-right: 10px;
+        }
+
+        .search-results {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            max-height: 300px;
+            overflow-y: auto;
+            background-color: white;
+            border: 1px solid #ddd;
+            border-top: none;
+            z-index: 1000;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            display: none;
+        }
+
+            .search-results .search-item {
+                padding: 10px;
+                cursor: pointer;
+                border-bottom: 1px solid #eee;
+            }
+
+                .search-results .search-item:hover {
+                    background-color: #f5f5f5;
+                }
+
+                .search-results .search-item .topic-title {
+                    font-weight: bold;
+                }
+
+                .search-results .search-item .topic-section {
+                    color: #666;
+                    font-size: 0.85em;
+                }
+
+        .topic-button {
+            position: relative;
+            padding: 10px;
+            width: 100%;
+            text-align: left;
+            background: #f8f8f8;
+            border: none;
+            cursor: pointer;
+        }
+
+        .topic-count {
+            display: none; /* Скрыто по умолчанию */
+            color: #666;
+        }
+
+        .topic-button:hover .topic-count {
+            display: inline; /* Показываем при наведении */
+        }
+    </style>
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Язык Go. Темы для изучения.</h1>
+        <nav>
+            <ul>
+                <li><a href="@Url.Action("Index", "Home")">Главная страница</a></li>
+                <li><a href="@Url.Action("Catalog", "Home")" class="active">Темы изучения</a></li>
+                <li><a href="@Url.Action("AddTopic", "Home")">Добавить тему</a></li>
+                <li><a href="@Url.Action("Contacts", "Home")">Контакты разработчика</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <section>
+            <h2 class="visually-hidden">Темы для изучения</h2>
+            <div class="filter-container">
+                <div class="search-container">
+                    <input type="text" id="search" placeholder="Поиск по разделам..." oninput="searchTopics(this.value)">
+                    <div id="search-results" class="search-results"></div>
+                </div>
+                <select id="difficulty-filter" onchange="applyFilters()">
+                    <option value="">Выберите сложность</option>
+                    <option value="1">1 звезда</option>
+                    <option value="2">2 звезды</option>
+                    <option value="3">3 звезды</option>
+                    <option value="4">4 звезды</option>
+                    <option value="5">5 звезд</option>
+                </select>
+                <select id="time-filter" onchange="applyFilters()">
+                    <option value="">Выберите время</option>
+                    <option value="5">5 минут</option>
+                    <option value="15">15 минут</option>
+                    <option value="30">30 минут</option>
+                    <option value="60">1 час</option>
+                    <option value="120">2 часа</option>
+                </select>
+            </div>
+            <ul class="topic-list">
+                @foreach (var sec in Model)
+                {
+                    <li>
+                        <button class="topic-button" data-section="@sec.SectionName">@sec.SectionName (@sec.TopicCount)</button>
+                        <div class="cards-container hidden" data-section="@sec.SectionName"></div>
+                    </li>
+                }
+            </ul>
+        </section>
+    </main>
+    <footer>
+        <p>
+            <img src="~/images/kaspersky.jpg" alt="Логотип Kaspersky" class="footer-img">
+            Файлы защищены Kaspersky Internet Security
+        </p>
+    </footer>
+    <script>
+        window.topicsData = @Html.Raw(Json.Serialize(Model));
+    </script>
+    <script src="~/js/shared.js"></script>
+    <script src="~/js/catalog.js"></script>
+</body>
+</html>
