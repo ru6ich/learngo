@@ -8,10 +8,8 @@ var builder = WebApplication.CreateBuilder(args);
 // Добавляем сервисы MVC
 builder.Services.AddControllersWithViews();
 
-// Захардкодим строку подключения для отладки
-var connectionString = "mysql://root:PiUAlNuyDnapmfySiZxvaQdrgLzjwBOA@mysql.railway.internal:3306/railway";
-// Если строка подключения изменилась после пересоздания MySQL-сервиса, замените её на новую, например:
-// var connectionString = "mysql://root:newpassword@mysql.railway.internal:3306/railway";
+// Захардкодим строку подключения в формате, который ожидает MySqlConnector
+var connectionString = "Server=mysql.railway.internal;Port=3306;Database=railway;User=root;Password=PiUAlNuyDnapmfySiZxvaQdrgLzjwBOA;";
 
 // Логируем строку подключения для отладки
 Console.WriteLine($"Using connection string: {connectionString}");
