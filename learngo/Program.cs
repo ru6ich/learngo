@@ -1,19 +1,31 @@
 using Backend.Data;
 using Microsoft.EntityFrameworkCore;
 using System;
+using MySqlConnector;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Добавляем сервисы MVC
 builder.Services.AddControllersWithViews();
 
-// Получаем строку подключения из переменной окружения MYSQL_URL (Railway) или appsettings.json
-var connectionString = Environment.GetEnvironmentVariable("MYSQL_URL") ??
-    builder.Configuration.GetConnectionString("DefaultConnection");
+// Захардкодим строку подключения для отладки
+var connectionString = "mysql://root:PiUAlNuyDnapmfySiZxvaQdrgLzjwBOA@mysql.railway.internal:3306/railway";
+// Если строка подключения изменилась после пересоздания MySQL-сервиса, замените её на новую, например:
+// var connectionString = "mysql://root:newpassword@mysql.railway.internal:3306/railway";
+
+// Логируем строку подключения для отладки
+Console.WriteLine($"Using connection string: {connectionString}");
+
+// Настраиваем параметры подключения, отключаем строгую проверку SSL
+var connectionStringBuilder = new MySqlConnectionStringBuilder(connectionString)
+{
+    SslMode = MySqlSslMode.Disabled // Отключаем SSL для тестов
+};
+connectionString = connectionStringBuilder.ToString();
 
 // Настраиваем DbContext для использования MySQL
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
+    options.UseMySql(connectionString, new MySqlServerVersion(new Version(8, 0, 21))));
 
 var app = builder.Build();
 
