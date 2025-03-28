@@ -1,7 +1,6 @@
 using Backend.Data;
 using Microsoft.EntityFrameworkCore;
 using System;
-using Microsoft.AspNetCore.DataProtection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,10 +14,6 @@ var connectionString = Environment.GetEnvironmentVariable("MYSQL_URL") ??
 // Настраиваем DbContext для использования MySQL
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
-
-// Настраиваем Data Protection для хранения ключей в постоянной директории
-builder.Services.AddDataProtection()
-    .PersistKeysToFileSystem(new DirectoryInfo("/app/dataprotection"));
 
 var app = builder.Build();
 
