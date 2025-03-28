@@ -8,7 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Добавляем сервисы MVC
 builder.Services.AddControllersWithViews();
 
-// Захардкодим строку подключения в формате, который ожидает MySqlConnector
+// Захардкодим строку подключения в формате "ключ=значение"
 var connectionString = "Server=mysql.railway.internal;Port=3306;Database=railway;User=root;Password=PiUAlNuyDnapmfySiZxvaQdrgLzjwBOA;";
 
 // Логируем строку подключения для отладки
@@ -24,6 +24,10 @@ connectionString = connectionStringBuilder.ToString();
 // Настраиваем DbContext для использования MySQL
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseMySql(connectionString, new MySqlServerVersion(new Version(8, 0, 21))));
+
+// Настраиваем порт из переменной окружения PORT
+var port = Environment.GetEnvironmentVariable("PORT") ?? "8080"; // 8080 как запасной вариант
+builder.WebHost.UseUrls($"http://*:{port}");
 
 var app = builder.Build();
 
