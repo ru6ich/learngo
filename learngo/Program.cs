@@ -17,13 +17,6 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 var app = builder.Build();
 
-// Применяем миграции при запуске приложения
-using (var scope = app.Services.CreateScope())
-{
-    var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    dbContext.Database.Migrate();
-}
-
 // Настраиваем конвейер обработки запросов
 if (!app.Environment.IsDevelopment())
 {
