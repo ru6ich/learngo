@@ -28,40 +28,32 @@ namespace Backend.Controllers
             {
                 _logger.LogInformation("Получен запрос на добавление темы: {@TopicDto}", topicDto);
 
-                // Проверяем корректность данных
                 if (!ModelState.IsValid)
                 {
                     var errors = ModelState.Values.SelectMany(v => v.Errors)
                                                 .Select(e => e.ErrorMessage)
                                                 .ToList();
-
                     _logger.LogWarning("Ошибки валидации: {Errors}", string.Join("; ", errors));
                     return BadRequest(new { message = "Ошибка валидации", errors });
                 }
 
-                // Проверка существования раздела
                 var section = await _context.Sections
                     .FirstOrDefaultAsync(s => s.SectionName == topicDto.SectionName);
 
                 if (section == null)
                 {
-                    _logger.LogInformation("Создание нового раздела: {SectionName}", topicDto.SectionName);
                     section = new Section { SectionName = topicDto.SectionName };
                     _context.Sections.Add(section);
                     await _context.SaveChangesAsync();
                 }
 
-                // Преобразование сложности в число
                 if (!int.TryParse(topicDto.Complexity, out int difficulty))
                 {
-                    _logger.LogWarning("Некорректное значение сложности: {Complexity}", topicDto.Complexity);
                     return BadRequest(new { message = "Некорректное значение сложности" });
                 }
 
-                // Преобразование даты
                 if (!DateTime.TryParse(topicDto.CreationDate, out DateTime creationDate))
                 {
-                    _logger.LogWarning("Некорректный формат даты: {CreationDate}", topicDto.CreationDate);
                     return BadRequest(new { message = "Некорректный формат даты" });
                 }
 
@@ -77,10 +69,8 @@ namespace Backend.Controllers
                     SectionId = section.Id
                 };
 
-                _logger.LogInformation("Попытка добавления темы в базу данных");
                 _context.Topics.Add(topic);
                 await _context.SaveChangesAsync();
-                _logger.LogInformation("Тема успешно добавлена в базу данных");
 
                 return Ok(new { message = "Тема успешно добавлена" });
             }

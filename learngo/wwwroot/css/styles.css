@@ -290,3 +290,14 @@ section {
         padding-bottom: 10px;
         border-bottom: 2px solid #dee2e6;
     }
+
+.error {
+    border: 2px solid red;
+}
+
+.error-message {
+    color: red;
+    font-size: 12px;
+    margin-top: 5px;
+    display: block;
+}

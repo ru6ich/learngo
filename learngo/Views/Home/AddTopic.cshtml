@@ -26,52 +26,68 @@
     </header>
     <main>
         <p>Введите информацию для добавления новой темы</p>
-        <form asp-action="AddTopic" method="post">
-            <label asp-for="TopicName">Название темы:</label>
-            <input asp-for="TopicName" required placeholder="Не менее 3 символов">
-            <span asp-validation-for="TopicName" style="color: red;"></span>
+        <form id="topic-form" method="post">
+            <div>
+                <label asp-for="TopicName">Название темы:</label>
+                <input asp-for="TopicName" id="topic-name" name="TopicName" placeholder="Не менее 3 символов">
+                <span class="error-message" id="topic-name-error"></span>
+            </div>
 
-            <label asp-for="SectionName">Название раздела:</label>
-            <input asp-for="SectionName" required placeholder="Не менее 3 символов">
-            <span asp-validation-for="SectionName" style="color: red;"></span>
+            <div>
+                <label asp-for="SectionName">Название раздела:</label>
+                <input asp-for="SectionName" id="section-name" name="SectionName" placeholder="Не менее 3 символов">
+                <span class="error-message" id="section-name-error"></span>
+            </div>
 
-            <label asp-for="Description">Описание:</label>
-            <textarea asp-for="Description" required placeholder="Не менее 10 символов"></textarea>
-            <span asp-validation-for="Description" style="color: red;"></span>
+            <div>
+                <label asp-for="Description">Описание:</label>
+                <textarea asp-for="Description" id="description" name="Description" placeholder="Не менее 10 символов"></textarea>
+                <span class="error-message" id="description-error"></span>
+            </div>
 
-            <label asp-for="AuthorName">Имя автора:</label>
-            <input asp-for="AuthorName" required placeholder="Только буквы и пробелы">
-            <span asp-validation-for="AuthorName" style="color: red;"></span>
+            <div>
+                <label asp-for="AuthorName">Имя автора:</label>
+                <input asp-for="AuthorName" id="author-name" name="AuthorName" placeholder="Только буквы и пробелы">
+                <span class="error-message" id="author-name-error"></span>
+            </div>
 
-            <label asp-for="Email">Email автора:</label>
-            <input asp-for="Email" type="email" required placeholder="example@mail.com">
-            <span asp-validation-for="Email" style="color: red;"></span>
+            <div>
+                <label asp-for="Email">Email автора:</label>
+                <input asp-for="Email" id="email" name="Email" type="email" placeholder="example@mail.com">
+                <span class="error-message" id="email-error"></span>
+            </div>
 
-            <label asp-for="CreationDate">Дата создания темы:</label>
-            <input asp-for="CreationDate" type="date" required>
-            <span asp-validation-for="CreationDate" style="color: red;"></span>
+            <div>
+                <label asp-for="CreationDate">Дата создания темы:</label>
+                <input asp-for="CreationDate" id="creation-date" name="CreationDate" type="date">
+                <span class="error-message" id="creation-date-error"></span>
+            </div>
 
-            <label asp-for="Complexity">Сложность темы (звезды):</label>
-            <select asp-for="Complexity" required>
-                <option value="">Выберите сложность</option>
-                <option value="1">1 звезда</option>
-                <option value="2">2 звезды</option>
-                <option value="3">3 звезды</option>
-                <option value="4">4 звезды</option>
-                <option value="5">5 звезд</option>
-            </select>
-            <span asp-validation-for="Complexity" style="color: red;"></span>
+            <div>
+                <label asp-for="Complexity">Сложность темы (звезды):</label>
+                <select asp-for="Complexity" id="complexity" name="Complexity">
+                    <option value="">Выберите сложность</option>
+                    <option value="1">1 звезда</option>
+                    <option value="2">2 звезды</option>
+                    <option value="3">3 звезды</option>
+                    <option value="4">4 звезды</option>
+                    <option value="5">5 звезд</option>
+                </select>
+                <span class="error-message" id="complexity-error"></span>
+            </div>
 
-            <label asp-for="ReadingTime">Время чтения:</label>
-            <select asp-for="ReadingTime" required>
-                <option value="">Выберите время</option>
-                <option value="5">5 минут</option>
-                <option value="15">15 минут</option>
-                <option value="30">30 минут</option>
-                <option value="60">1 час</option>
-                <option value="120">2 часа</option>
-            </select>
-            <span asp-validation-for="ReadingTime" style="color: red;"></span>
+            <div>
+                <label asp-for="ReadingTime">Время чтения:</label>
+                <select asp-for="ReadingTime" id="reading-time" name="ReadingTime">
+                    <option value="">Выберите время</option>
+                    <option value="5">5 минут</option>
+                    <option value="15">15 минут</option>
+                    <option value="30">30 минут</option>
+                    <option value="60">1 час</option>
+                    <option value="120">2 часа</option>
+                </select>
+                <span class="error-message" id="reading-time-error"></span>
+            </div>
 
             <button type="submit">Добавить</button>
         </form>
@@ -82,10 +98,8 @@
             Файлы защищены Kaspersky Internet Security
         </p>
     </footer>
-    <script src="~/js/shared.js"></script>
-    <script src="~/js/add-topic.js"></script>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
-    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/js/add-topic.js"></script>
 </body>
 </html>
