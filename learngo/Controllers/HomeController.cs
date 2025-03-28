@@ -38,6 +38,11 @@ namespace Backend.Controllers
             return View();
         }
 
+        public IActionResult Contacts()
+        {
+            return View();
+        }
+
         [HttpPost]
         public async Task<IActionResult> AddTopic(TopicDto topicDto)
         {

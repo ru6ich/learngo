@@ -1,0 +1,74 @@
+﻿@{
+    ViewData["Title"] = "Контакты";
+}
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/css/styles.css">
+    <style>
+        table {
+            width: 100%;
+            max-width: 600px;
+            margin: 20px auto;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f8f8f8;
+            width: 30%;
+        }
+
+        td {
+            background-color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Контакты</h1>
+        <nav>
+            <ul>
+                <li><a href="@Url.Action("Index", "Home")">Главная страница</a></li>
+                <li><a href="@Url.Action("Catalog", "Home")">Темы изучения</a></li>
+                <li><a href="@Url.Action("AddTopic", "Home")">Добавить тему</a></li>
+                <li><a href="@Url.Action("Contacts", "Home")" class="active">Контакты разработчика</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <section>
+            <h2>Свяжитесь с нами</h2>
+            <table>
+                <tr>
+                    <th>Email</th>
+                    <td>learn-go@gmail.com</td>
+                </tr>
+                <tr>
+                    <th>Телеграм</th>
+                    <td>learnGo</td>
+                </tr>
+                <tr>
+                    <th>Вконтакте</th>
+                    <td>learnGo</td>
+                </tr>
+            </table>
+        </section>
+    </main>
+    <footer>
+        <p>
+            <img src="~/assets/kaspersky.jpg" alt="Логотип Kaspersky" class="footer-img">
+            Файлы защищены Kaspersky Internet Security
+        </p>
+    </footer>
+</body>
+</html>

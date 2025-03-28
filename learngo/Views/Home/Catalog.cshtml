@@ -12,7 +12,6 @@
     <title>@ViewData["Title"]</title>
     <link rel="stylesheet" href="~/css/styles.css">
     <style>
-        <style >
         .search-container {
             position: relative;
             display: inline-block;
@@ -71,7 +70,25 @@
         .topic-button:hover .topic-count {
             display: inline; /* Показываем при наведении */
         }
-    </style>
+
+        .cards-container.hidden {
+            display: none;
+        }
+
+        .card {
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin: 10px 0;
+            background-color: #fff;
+        }
+
+        .stars {
+            color: gold;
+        }
+
+        .error {
+            color: red;
+        }
     </style>
 </head>
 <body>
@@ -91,10 +108,10 @@
             <h2 class="visually-hidden">Темы для изучения</h2>
             <div class="filter-container">
                 <div class="search-container">
-                    <input type="text" id="search" placeholder="Поиск по разделам..." oninput="searchTopics(this.value)">
+                    <input type="text" id="search" placeholder="Поиск по темам...">
                     <div id="search-results" class="search-results"></div>
                 </div>
-                <select id="difficulty-filter" onchange="applyFilters()">
+                <select id="difficulty-filter">
                     <option value="">Выберите сложность</option>
                     <option value="1">1 звезда</option>
                     <option value="2">2 звезды</option>
@@ -102,7 +119,7 @@
                     <option value="4">4 звезды</option>
                     <option value="5">5 звезд</option>
                 </select>
-                <select id="time-filter" onchange="applyFilters()">
+                <select id="time-filter">
                     <option value="">Выберите время</option>
                     <option value="5">5 минут</option>
                     <option value="15">15 минут</option>
@@ -111,27 +128,16 @@
                     <option value="120">2 часа</option>
                 </select>
             </div>
-            <ul class="topic-list">
-                @foreach (var sec in Model)
-                {
-                    <li>
-                        <button class="topic-button" data-section="@sec.SectionName">@sec.SectionName (@sec.TopicCount)</button>
-                        <div class="cards-container hidden" data-section="@sec.SectionName"></div>
-                    </li>
-                }
-            </ul>
+            <ul class="topic-list"></ul>
         </section>
     </main>
     <footer>
         <p>
-            <img src="~/images/kaspersky.jpg" alt="Логотип Kaspersky" class="footer-img">
+            <img src="~/assets/kaspersky.jpg" alt="Логотип Kaspersky" class="footer-img">
             Файлы защищены Kaspersky Internet Security
         </p>
     </footer>
-    <script>
-        window.topicsData = @Html.Raw(Json.Serialize(Model));
-    </script>
-    <script src="~/js/shared.js"></script>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/js/catalog.js"></script>
 </body>
 </html>

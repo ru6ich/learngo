@@ -5,6 +5,7 @@ using Backend.Models;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 
 namespace Backend.Controllers
 {
@@ -81,19 +82,13 @@ namespace Backend.Controllers
             }
         }
 
-
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Topic>>> GetTopics()
         {
             try
             {
                 _logger.LogInformation("Получен запрос на получение списка тем");
-                
-                // Получаем все разделы
-                var sections = await _context.Sections.ToListAsync();
-                _logger.LogInformation("Найдено разделов: {Count}", sections.Count);
-                
-                // Получаем все темы с включением разделов
+
                 var topics = await _context.Topics
                     .Include(t => t.Section)
                     .Select(t => new
@@ -110,18 +105,17 @@ namespace Backend.Controllers
                         Section = t.Section != null ? new { t.Section.SectionName } : null
                     })
                     .ToListAsync();
-                    
+
                 _logger.LogInformation("Успешно получено {Count} тем", topics.Count);
-                
-                // Логируем каждую тему
+
                 foreach (var topic in topics)
                 {
-                    _logger.LogInformation("Тема: {TopicName}, Раздел: {SectionName}, ID раздела: {SectionId}", 
-                        topic.TopicName, 
-                        topic.Section?.SectionName ?? "Нет раздела", 
+                    _logger.LogInformation("Тема: {TopicName}, Раздел: {SectionName}, ID раздела: {SectionId}",
+                        topic.TopicName,
+                        topic.Section?.SectionName ?? "Нет раздела",
                         topic.SectionId);
                 }
-                
+
                 return Ok(topics);
             }
             catch (Exception ex)
@@ -137,11 +131,10 @@ namespace Backend.Controllers
             try
             {
                 _logger.LogInformation("Получен запрос на получение тем для раздела: {SectionName}", sectionName);
-                
-                // Проверяем существование раздела
+
                 var section = await _context.Sections
                     .FirstOrDefaultAsync(s => s.SectionName == sectionName);
-                    
+
                 if (section == null)
                 {
                     _logger.LogWarning("Раздел {SectionName} не найден", sectionName);
@@ -149,11 +142,11 @@ namespace Backend.Controllers
                 }
 
                 _logger.LogInformation("Найден раздел с ID: {SectionId}", section.Id);
-                
-                // Получаем темы для раздела
+
                 var topics = await _context.Topics
                     .Where(t => t.SectionId == section.Id)
-                    .Select(t => new {
+                    .Select(t => new
+                    {
                         t.Id,
                         t.TopicName,
                         t.Description,
@@ -162,21 +155,21 @@ namespace Backend.Controllers
                         t.AuthorName,
                         t.AuthorEmail,
                         t.CreatedAt,
-                        t.SectionId
+                        t.SectionId,
+                        Section = new { SectionName = section.SectionName } // Улучшаем возвращаемые данные
                     })
                     .ToListAsync();
 
                 _logger.LogInformation("Успешно получено {Count} тем для раздела {SectionName}", topics.Count, sectionName);
-                
-                // Логируем каждую тему
+
                 foreach (var topic in topics)
                 {
-                    _logger.LogInformation("Тема: {TopicName}, ID темы: {TopicId}, ID раздела: {SectionId}", 
-                        topic.TopicName, 
+                    _logger.LogInformation("Тема: {TopicName}, ID темы: {TopicId}, ID раздела: {SectionId}",
+                        topic.TopicName,
                         topic.Id,
                         topic.SectionId);
                 }
-                
+
                 return Ok(topics);
             }
             catch (Exception ex)
@@ -187,13 +180,12 @@ namespace Backend.Controllers
         }
 
         [HttpGet("sections")]
-        public async Task<IActionResult> GetSections()
+        public async Task<IActionResult> GetSections(int skip = 0, int take = 3)
         {
             try
             {
-                _logger.LogInformation("Получение списка разделов");
-                
-                // Получаем разделы с количеством тем
+                _logger.LogInformation("Получение списка разделов с пагинацией: Skip={Skip}, Take={Take}", skip, take);
+
                 var sections = await _context.Sections
                     .Select(s => new
                     {
@@ -201,16 +193,18 @@ namespace Backend.Controllers
                         s.SectionName,
                         TopicCount = _context.Topics.Count(t => t.SectionId == s.Id)
                     })
+                    .OrderBy(s => s.SectionName) // Сортировка по имени для предсказуемого порядка
+                    .Skip(skip)
+                    .Take(take)
                     .ToListAsync();
-                    
-                _logger.LogInformation($"Успешно получено {sections.Count} разделов");
-                
-                // Логируем каждый раздел
+
+                _logger.LogInformation("Успешно получено {Count} разделов", sections.Count);
+
                 foreach (var section in sections)
                 {
-                    _logger.LogInformation($"Раздел: {section.SectionName}, Количество тем: {section.TopicCount}");
+                    _logger.LogInformation("Раздел: {SectionName}, Количество тем: {TopicCount}", section.SectionName, section.TopicCount);
                 }
-                
+
                 return Ok(sections);
             }
             catch (Exception ex)
@@ -226,21 +220,19 @@ namespace Backend.Controllers
             try
             {
                 _logger.LogInformation("Получен запрос на получение темы с ID: {Id}", id);
-                
-                // Проверяем существование темы
+
                 var topic = await _context.Topics
                     .FirstOrDefaultAsync(t => t.Id == id);
-                    
+
                 if (topic == null)
                 {
                     _logger.LogWarning("Тема с ID {Id} не найдена", id);
                     return NotFound($"Тема с ID {id} не найдена");
                 }
 
-                _logger.LogInformation("Найдена тема: {TopicName}, ID: {Id}, SectionId: {SectionId}", 
+                _logger.LogInformation("Найдена тема: {TopicName}, ID: {Id}, SectionId: {SectionId}",
                     topic.TopicName, topic.Id, topic.SectionId);
 
-                // Получаем информацию о разделе
                 var section = await _context.Sections
                     .FirstOrDefaultAsync(s => s.Id == topic.SectionId);
 
@@ -252,7 +244,6 @@ namespace Backend.Controllers
 
                 _logger.LogInformation("Найден раздел: {SectionName}", section.SectionName);
 
-                // Создаем объект с данными темы и раздела
                 var result = new
                 {
                     topic.Id,
@@ -285,15 +276,13 @@ namespace Backend.Controllers
         {
             try
             {
-                _logger.LogInformation("Получен запрос на поиск тем. Параметры: Query={Query}, Difficulty={Difficulty}, Time={Time}", 
+                _logger.LogInformation("Получен запрос на поиск тем. Параметры: Query={Query}, Difficulty={Difficulty}, Time={Time}",
                     query, difficulty, time);
 
-                // Начинаем с базового запроса
                 var searchQuery = _context.Topics
                     .Include(t => t.Section)
                     .AsQueryable();
 
-                // Применяем поиск по тексту, если запрос не пустой
                 if (!string.IsNullOrWhiteSpace(query))
                 {
                     searchQuery = searchQuery.Where(t =>
@@ -302,19 +291,16 @@ namespace Backend.Controllers
                         (t.Section != null && t.Section.SectionName.Contains(query)));
                 }
 
-                // Применяем фильтр по сложности, если указан
                 if (!string.IsNullOrWhiteSpace(difficulty) && int.TryParse(difficulty, out int diffValue))
                 {
                     searchQuery = searchQuery.Where(t => t.Difficulty == diffValue);
                 }
 
-                // Применяем фильтр по времени, если указан
                 if (!string.IsNullOrWhiteSpace(time) && int.TryParse(time, out int timeValue))
                 {
                     searchQuery = searchQuery.Where(t => t.TimeLimit <= timeValue);
                 }
 
-                // Получаем результаты
                 var topics = await searchQuery
                     .Select(t => new
                     {
@@ -333,7 +319,6 @@ namespace Backend.Controllers
 
                 _logger.LogInformation("Найдено тем: {Count}", topics.Count);
 
-                // Логируем результаты поиска
                 foreach (var topic in topics)
                 {
                     _logger.LogInformation("Найдена тема: {TopicName}, Раздел: {SectionName}, Сложность: {Difficulty}, Время: {TimeLimit}",
@@ -353,53 +338,51 @@ namespace Backend.Controllers
         }
 
         [HttpGet("filter")]
-public async Task<ActionResult<IEnumerable<Topic>>> FilterTopics(
-    [FromQuery] string? difficulty = null,
-    [FromQuery] string? time = null)
-{
-    try
-    {
-        _logger.LogInformation("Фильтрация тем: Difficulty={Difficulty}, Time={Time}", difficulty, time);
-
-        var query = _context.Topics.Include(t => t.Section).AsQueryable();
-
-        if (!string.IsNullOrWhiteSpace(difficulty) && int.TryParse(difficulty, out int difficultyValue))
+        public async Task<ActionResult<IEnumerable<Topic>>> FilterTopics(
+            [FromQuery] string? difficulty = null,
+            [FromQuery] string? time = null)
         {
-            query = query.Where(t => t.Difficulty == difficultyValue);
-        }
-
-        if (!string.IsNullOrWhiteSpace(time) && int.TryParse(time, out int timeValue))
-        {
-            query = query.Where(t => t.TimeLimit == timeValue); // Строгое соответствие
-        }
-
-        var topics = await query
-            .Select(t => new
+            try
             {
-                t.Id,
-                t.TopicName,
-                t.Description,
-                t.Difficulty,
-                t.TimeLimit,
-                t.AuthorName,
-                t.AuthorEmail,
-                t.CreatedAt,
-                t.SectionId,
-                Section = t.Section != null ? new { t.Section.SectionName } : null
-            })
-            .ToListAsync();
+                _logger.LogInformation("Фильтрация тем: Difficulty={Difficulty}, Time={Time}", difficulty, time);
 
-        _logger.LogInformation("Найдено {Count} тем после фильтрации", topics.Count);
-        return Ok(topics);
-    }
-    catch (Exception ex)
-    {
-        _logger.LogError(ex, "Ошибка при фильтрации тем");
-        return StatusCode(500, new { message = "Ошибка при фильтрации тем", error = ex.Message });
-    }
-}
+                var query = _context.Topics.Include(t => t.Section).AsQueryable();
 
+                if (!string.IsNullOrWhiteSpace(difficulty) && int.TryParse(difficulty, out int difficultyValue))
+                {
+                    query = query.Where(t => t.Difficulty == difficultyValue);
+                }
 
+                if (!string.IsNullOrWhiteSpace(time) && int.TryParse(time, out int timeValue))
+                {
+                    query = query.Where(t => t.TimeLimit == timeValue); // Строгое соответствие
+                }
+
+                var topics = await query
+                    .Select(t => new
+                    {
+                        t.Id,
+                        t.TopicName,
+                        t.Description,
+                        t.Difficulty,
+                        t.TimeLimit,
+                        t.AuthorName,
+                        t.AuthorEmail,
+                        t.CreatedAt,
+                        t.SectionId,
+                        Section = t.Section != null ? new { t.Section.SectionName } : null
+                    })
+                    .ToListAsync();
+
+                _logger.LogInformation("Найдено {Count} тем после фильтрации", topics.Count);
+                return Ok(topics);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Ошибка при фильтрации тем");
+                return StatusCode(500, new { message = "Ошибка при фильтрации тем", error = ex.Message });
+            }
+        }
 
         [HttpGet("section/{id}/topics")]
         public async Task<IActionResult> GetSectionTopics(int id)
@@ -407,10 +390,10 @@ public async Task<ActionResult<IEnumerable<Topic>>> FilterTopics(
             try
             {
                 _logger.LogInformation("Получен AJAX запрос на получение тем для раздела с ID: {Id}", id);
-                
+
                 var section = await _context.Sections
                     .FirstOrDefaultAsync(s => s.Id == id);
-                    
+
                 if (section == null)
                 {
                     _logger.LogWarning("Раздел с ID {Id} не найден", id);
@@ -436,7 +419,7 @@ public async Task<ActionResult<IEnumerable<Topic>>> FilterTopics(
                     .ToListAsync();
 
                 _logger.LogInformation("Найдено {Count} тем для раздела {SectionName}", topics.Count, section.SectionName);
-                
+
                 return PartialView("_TopicsList", topics);
             }
             catch (Exception ex)
@@ -454,10 +437,9 @@ public async Task<ActionResult<IEnumerable<Topic>>> FilterTopics(
         {
             try
             {
-                _logger.LogInformation("Получен запрос на отображение каталога. Параметры: Query={Query}, Difficulty={Difficulty}, Time={Time}", 
+                _logger.LogInformation("Получен запрос на отображение каталога. Параметры: Query={Query}, Difficulty={Difficulty}, Time={Time}",
                     query, difficulty, time);
-                
-                // Получаем только разделы с количеством тем
+
                 var sections = await _context.Sections
                     .Select(s => new
                     {
@@ -466,9 +448,9 @@ public async Task<ActionResult<IEnumerable<Topic>>> FilterTopics(
                         TopicCount = _context.Topics.Count(t => t.SectionId == s.Id)
                     })
                     .ToListAsync();
-                    
+
                 _logger.LogInformation("Успешно получено {Count} разделов", sections.Count);
-                
+
                 return View(sections);
             }
             catch (Exception ex)
@@ -489,17 +471,14 @@ public async Task<ActionResult<IEnumerable<Topic>>> FilterTopics(
                     return NotFound($"Тема с ID {id} не найдена");
                 }
 
-                // Обновляем свойства темы
                 existingTopic.TopicName = updatedTopic.TopicName;
                 existingTopic.Description = updatedTopic.Description;
                 existingTopic.Difficulty = updatedTopic.Difficulty;
                 existingTopic.TimeLimit = updatedTopic.TimeLimit;
                 existingTopic.SectionId = updatedTopic.SectionId;
 
-                // Сохраняем изменения
                 await _context.SaveChangesAsync();
 
-                // Логируем успешное обновление
                 _logger.LogInformation($"Тема {id} успешно обновлена");
 
                 return Ok(new { message = "Тема успешно обновлена" });
@@ -512,41 +491,38 @@ public async Task<ActionResult<IEnumerable<Topic>>> FilterTopics(
         }
     }
 
-    
+    public class TopicDto
+    {
+        [Required(ErrorMessage = "Название темы обязательно.")]
+        [MinLength(3, ErrorMessage = "Название темы должно содержать не менее 3 символов.")]
+        public required string TopicName { get; set; }
 
-public class TopicDto
-{
-    [Required(ErrorMessage = "Название темы обязательно.")]
-    [MinLength(3, ErrorMessage = "Название темы должно содержать не менее 3 символов.")]
-    public required string TopicName { get; set; }
+        [Required(ErrorMessage = "Название раздела обязательно.")]
+        [MinLength(3, ErrorMessage = "Название раздела должно содержать не менее 3 символов.")]
+        public required string SectionName { get; set; }
 
-    [Required(ErrorMessage = "Название раздела обязательно.")]
-    [MinLength(3, ErrorMessage = "Название раздела должно содержать не менее 3 символов.")]
-    public required string SectionName { get; set; }
+        [Required(ErrorMessage = "Описание обязательно.")]
+        [MinLength(10, ErrorMessage = "Описание должно содержать не менее 10 символов.")]
+        public required string Description { get; set; }
 
-    [Required(ErrorMessage = "Описание обязательно.")]
-    [MinLength(10, ErrorMessage = "Описание должно содержать не менее 10 символов.")]
-    public required string Description { get; set; }
+        [Required(ErrorMessage = "Имя автора обязательно.")]
+        [RegularExpression(@"^[A-Za-zА-Яа-яЁё\s-]+$", ErrorMessage = "Имя автора должно содержать только буквы и пробелы.")]
+        public required string AuthorName { get; set; }
 
-    [Required(ErrorMessage = "Имя автора обязательно.")]
-    [RegularExpression(@"^[A-Za-zА-Яа-яЁё\s-]+$", ErrorMessage = "Имя автора должно содержать только буквы и пробелы.")]
-    public required string AuthorName { get; set; }
+        [Required(ErrorMessage = "Email обязателен.")]
+        [EmailAddress(ErrorMessage = "Введите корректный адрес электронной почты.")]
+        public required string Email { get; set; }
 
-    [Required(ErrorMessage = "Email обязателен.")]
-    [EmailAddress(ErrorMessage = "Введите корректный адрес электронной почты.")]
-    public required string Email { get; set; }
+        [Required(ErrorMessage = "Сложность обязательна.")]
+        [RegularExpression(@"^[1-5]$", ErrorMessage = "Сложность должна быть числом от 1 до 5.")]
+        public required string Complexity { get; set; }
 
-    [Required(ErrorMessage = "Сложность обязательна.")]
-    [RegularExpression(@"^[1-5]$", ErrorMessage = "Сложность должна быть числом от 1 до 5.")]
-    public required string Complexity { get; set; }
+        [Required(ErrorMessage = "Время на изучение обязательно.")]
+        [Range(1, int.MaxValue, ErrorMessage = "Время на изучение должно быть положительным числом.")]
+        public int ReadingTime { get; set; }
 
-    [Required(ErrorMessage = "Время на изучение обязательно.")]
-    [Range(1, int.MaxValue, ErrorMessage = "Время на изучение должно быть положительным числом.")]
-    public int ReadingTime { get; set; }
-
-    [Required(ErrorMessage = "Дата создания обязательна.")]
-    [DataType(DataType.Date, ErrorMessage = "Введите корректную дату.")]
-    public required string CreationDate { get; set; }
+        [Required(ErrorMessage = "Дата создания обязательна.")]
+        [DataType(DataType.Date, ErrorMessage = "Введите корректную дату.")]
+        public required string CreationDate { get; set; }
+    }
 }
-
-} 
