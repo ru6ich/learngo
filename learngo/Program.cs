@@ -1,6 +1,5 @@
 using Backend.Data;
 using Microsoft.EntityFrameworkCore;
-using System;
 using MySqlConnector;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -8,7 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Добавляем сервисы MVC
 builder.Services.AddControllersWithViews();
 
-// Захардкодим строку подключения в формате "ключ=значение"
+// Используем публичный URL Railway
 var connectionString = "Server=mysql.railway.internal;Port=3306;Database=railway;User=root;Password=PiUAlNuyDnapmfySiZxvaQdrgLzjwBOA;";
 
 // Логируем строку подключения для отладки
@@ -25,11 +24,10 @@ connectionString = connectionStringBuilder.ToString();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseMySql(connectionString, new MySqlServerVersion(new Version(8, 0, 21))));
 
-// Получаем порт из переменной окружения PORT
+// Остальной код остаётся без изменений
 var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
 Console.WriteLine($"Using port: {port}");
 
-// Настраиваем приложение для прослушивания указанного порта
 builder.WebHost.ConfigureKestrel(options =>
 {
     options.ListenAnyIP(int.Parse(port));
@@ -37,7 +35,6 @@ builder.WebHost.ConfigureKestrel(options =>
 
 var app = builder.Build();
 
-// Настраиваем конвейер обработки запросов
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
@@ -47,10 +44,8 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
-
 app.UseAuthorization();
 
-// Настраиваем маршруты для MVC
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");

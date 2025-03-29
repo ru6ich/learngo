@@ -1,7 +1,7 @@
-@model Backend.Controllers.TopicDto
+п»ї@model Backend.Controllers.TopicDto
 
 @{
-    ViewData["Title"] = "Добавить тему";
+    ViewData["Title"] = "Р”РѕР±Р°РІРёС‚СЊ С‚РµРјСѓ";
 }
 
 <!DOCTYPE html>
@@ -14,88 +14,88 @@
 </head>
 <body>
     <header>
-        <h1>Добавить тему</h1>
+        <h1>Р”РѕР±Р°РІРёС‚СЊ С‚РµРјСѓ</h1>
         <nav>
             <ul>
-                <li><a href="@Url.Action("Index", "Home")">Главная страница</a></li>
-                <li><a href="@Url.Action("Catalog", "Home")">Темы изучения</a></li>
-                <li><a href="@Url.Action("AddTopic", "Home")" class="active">Добавить тему</a></li>
-                <li><a href="@Url.Action("Contacts", "Home")">Контакты разработчика</a></li>
+                <li><a href="@Url.Action("Index", "Home")">Р“Р»Р°РІРЅР°СЏ СЃС‚СЂР°РЅРёС†Р°</a></li>
+                <li><a href="@Url.Action("Catalog", "Home")">РўРµРјС‹ РёР·СѓС‡РµРЅРёСЏ</a></li>
+                <li><a href="@Url.Action("AddTopic", "Home")" class="active">Р”РѕР±Р°РІРёС‚СЊ С‚РµРјСѓ</a></li>
+                <li><a href="@Url.Action("Contacts", "Home")">РљРѕРЅС‚Р°РєС‚С‹ СЂР°Р·СЂР°Р±РѕС‚С‡РёРєР°</a></li>
             </ul>
         </nav>
     </header>
     <main>
-        <p>Введите информацию для добавления новой темы</p>
+        <p>Р’РІРµРґРёС‚Рµ РёРЅС„РѕСЂРјР°С†РёСЋ РґР»СЏ РґРѕР±Р°РІР»РµРЅРёСЏ РЅРѕРІРѕР№ С‚РµРјС‹</p>
         <form id="topic-form" method="post">
             <div>
-                <label asp-for="TopicName">Название темы:</label>
-                <input asp-for="TopicName" id="topic-name" name="TopicName" placeholder="Не менее 3 символов">
+                <label asp-for="TopicName">РќР°Р·РІР°РЅРёРµ С‚РµРјС‹:</label>
+                <input asp-for="TopicName" id="topic-name" name="TopicName" placeholder="РќРµ РјРµРЅРµРµ 3 СЃРёРјРІРѕР»РѕРІ">
                 <span class="error-message" id="topic-name-error"></span>
             </div>
 
             <div>
-                <label asp-for="SectionName">Название раздела:</label>
-                <input asp-for="SectionName" id="section-name" name="SectionName" placeholder="Не менее 3 символов">
+                <label asp-for="SectionName">РќР°Р·РІР°РЅРёРµ СЂР°Р·РґРµР»Р°:</label>
+                <input asp-for="SectionName" id="section-name" name="SectionName" placeholder="РќРµ РјРµРЅРµРµ 3 СЃРёРјРІРѕР»РѕРІ">
                 <span class="error-message" id="section-name-error"></span>
             </div>
 
             <div>
-                <label asp-for="Description">Описание:</label>
-                <textarea asp-for="Description" id="description" name="Description" placeholder="Не менее 10 символов"></textarea>
+                <label asp-for="Description">РћРїРёСЃР°РЅРёРµ:</label>
+                <textarea asp-for="Description" id="description" name="Description" placeholder="РќРµ РјРµРЅРµРµ 10 СЃРёРјРІРѕР»РѕРІ"></textarea>
                 <span class="error-message" id="description-error"></span>
             </div>
 
             <div>
-                <label asp-for="AuthorName">Имя автора:</label>
-                <input asp-for="AuthorName" id="author-name" name="AuthorName" placeholder="Только буквы и пробелы">
+                <label asp-for="AuthorName">РРјСЏ Р°РІС‚РѕСЂР°:</label>
+                <input asp-for="AuthorName" id="author-name" name="AuthorName" placeholder="РўРѕР»СЊРєРѕ Р±СѓРєРІС‹ Рё РїСЂРѕР±РµР»С‹">
                 <span class="error-message" id="author-name-error"></span>
             </div>
 
             <div>
-                <label asp-for="Email">Email автора:</label>
+                <label asp-for="Email">Email Р°РІС‚РѕСЂР°:</label>
                 <input asp-for="Email" id="email" name="Email" type="email" placeholder="example@mail.com">
                 <span class="error-message" id="email-error"></span>
             </div>
 
             <div>
-                <label asp-for="CreationDate">Дата создания темы:</label>
+                <label asp-for="CreationDate">Р”Р°С‚Р° СЃРѕР·РґР°РЅРёСЏ С‚РµРјС‹:</label>
                 <input asp-for="CreationDate" id="creation-date" name="CreationDate" type="date">
                 <span class="error-message" id="creation-date-error"></span>
             </div>
 
             <div>
-                <label asp-for="Complexity">Сложность темы (звезды):</label>
+                <label asp-for="Complexity">РЎР»РѕР¶РЅРѕСЃС‚СЊ С‚РµРјС‹ (Р·РІРµР·РґС‹):</label>
                 <select asp-for="Complexity" id="complexity" name="Complexity">
-                    <option value="">Выберите сложность</option>
-                    <option value="1">1 звезда</option>
-                    <option value="2">2 звезды</option>
-                    <option value="3">3 звезды</option>
-                    <option value="4">4 звезды</option>
-                    <option value="5">5 звезд</option>
+                    <option value="">Р’С‹Р±РµСЂРёС‚Рµ СЃР»РѕР¶РЅРѕСЃС‚СЊ</option>
+                    <option value="1">1 Р·РІРµР·РґР°</option>
+                    <option value="2">2 Р·РІРµР·РґС‹</option>
+                    <option value="3">3 Р·РІРµР·РґС‹</option>
+                    <option value="4">4 Р·РІРµР·РґС‹</option>
+                    <option value="5">5 Р·РІРµР·Рґ</option>
                 </select>
                 <span class="error-message" id="complexity-error"></span>
             </div>
 
             <div>
-                <label asp-for="ReadingTime">Время чтения:</label>
+                <label asp-for="ReadingTime">Р’СЂРµРјСЏ С‡С‚РµРЅРёСЏ:</label>
                 <select asp-for="ReadingTime" id="reading-time" name="ReadingTime">
-                    <option value="">Выберите время</option>
-                    <option value="5">5 минут</option>
-                    <option value="15">15 минут</option>
-                    <option value="30">30 минут</option>
-                    <option value="60">1 час</option>
-                    <option value="120">2 часа</option>
+                    <option value="">Р’С‹Р±РµСЂРёС‚Рµ РІСЂРµРјСЏ</option>
+                    <option value="5">5 РјРёРЅСѓС‚</option>
+                    <option value="15">15 РјРёРЅСѓС‚</option>
+                    <option value="30">30 РјРёРЅСѓС‚</option>
+                    <option value="60">1 С‡Р°СЃ</option>
+                    <option value="120">2 С‡Р°СЃР°</option>
                 </select>
                 <span class="error-message" id="reading-time-error"></span>
             </div>
 
-            <button type="submit">Добавить</button>
+            <button type="submit">Р”РѕР±Р°РІРёС‚СЊ</button>
         </form>
     </main>
     <footer>
         <p>
-            <img src="~/assets/kaspersky.jpg" alt="Логотип Kaspersky" class="footer-img">
-            Файлы защищены Kaspersky Internet Security
+            <img src="~/assets/kaspersky.jpg" alt="Р›РѕРіРѕС‚РёРї Kaspersky" class="footer-img">
+            Р¤Р°Р№Р»С‹ Р·Р°С‰РёС‰РµРЅС‹ Kaspersky Internet Security
         </p>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
